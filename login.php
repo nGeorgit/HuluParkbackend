@@ -23,7 +23,7 @@ if (!is_array($data) || !isset($data['email'])) {
 $email = trim($data['email']);
 
 // Prepare and execute SELECT statement
-$stmt_check = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
+$stmt_check = $conn->prepare("SELECT user_id, admin FROM users WHERE email = ?");
 $stmt_check->bind_param("s", $email);
 $stmt_check->execute();
 $result = $stmt_check->get_result();
@@ -34,7 +34,8 @@ if ($result->num_rows > 0) {
     $response = [
         "status" => "success",
         "message" => "Login successful",
-        "user_id" => $row['user_id']
+        "user_id" => $row['user_id'],
+        "admin" => $row['admin']
     ];
 } else {
     // User not found, create new account
@@ -46,7 +47,8 @@ if ($result->num_rows > 0) {
         $response = [
             "status" => "success",
             "message" => "Account created and login successful",
-            "user_id" => $newUserId
+            "user_id" => $newUserId,
+            "admin" => 0
         ];
     } else {
         $response = [
